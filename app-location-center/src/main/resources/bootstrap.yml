@@ -1,0 +1,18 @@
+server:
+  port: 8905
+
+spring:
+  application:
+    name: app-location-center
+  cloud:
+    nacos:
+#      server-addr: 10.50.40.116:8848,10.50.40.117:8848,10.50.40.145:8848
+      server-addr: http://10.50.40.116:8765
+      discovery:
+        ip: 10.50.40.113
+    sentinel:
+      transport:
+#        dashboard: 10.50.40.117:8819
+        dashboard: localhost：8080
+        port: 8719
+        heartbeat-interval-ms: 5000

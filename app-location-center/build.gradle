@@ -1,0 +1,53 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.12.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.leilei'
+version = '1.0.0'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
+    maven{ url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+    maven{ url 'https://repo1.maven.org/maven2/'}
+}
+
+
+ext {
+    set('springCloudVersion', "Hoxton.SR12")
+    set('SpringCloudAlibabaVersion', "2.2.7.RELEASE")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    compile 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile 'com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel'
+    implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.79'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${SpringCloudAlibabaVersion}"
+    }
+}
+// 依赖排除
+configurations {
+    all*.exclude module: 'fastjson'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

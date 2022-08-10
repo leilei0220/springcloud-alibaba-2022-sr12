@@ -1,0 +1,74 @@
+server:
+  port: 8902
+spring:
+  application:
+    name: app-base-center
+  cloud:
+    nacos:
+#      server-addr: 10.50.40.116:8848,10.50.40.117:8848,10.50.40.145:8848
+      server-addr: http://10.50.40.116:8765
+      config:
+        file-extension: yml
+        group: DEFAULT_GROUP
+        # 共享配置
+        shared-configs:
+          - data-id: adas-common-shared-config.yml
+            group: DEFAULT_GROUP
+            # 是否动态刷新，默认为false
+            refresh: true
+          - data-id: mongo-shared-config.yml
+            group: DEFAULT_GRONacosPropertySourceBuilder
+        # 扩展配置
+        extension-configs:
+          - data-id: adas-common-extension-config.yml
+            group: DEFAULT_GROUP
+          - data-id: adas-common-extension-config-2.yml
+            group: DEFAULT_GROUP
+      discovery:
+        ip: 10.50.40.113
+        metadata:
+          #心跳间隔 每隔1000ms,发送一次心跳
+          preserved.heart.beat.interval: 5000
+          #心跳暂停,即服务端6秒收不到客户端心跳，会将该客户端注册的实例设为不健康：
+          preserved.heart.beat.timeout: 10000
+          #Ip删除超时,即服务端7秒收不到客户端心跳，会将该客户端注册的实例删除(心跳恢复后则会自动加入）
+          preserved.ip.delete.timeout: 15000
+    sentinel:
+      transport:
+#        dashboard: 10.50.40.117:8819
+        dashboard: 10.50.40.113:8080
+        port: 8719
+        heartbeat-interval-ms: 5000
+      datasource:
+        # 流控策略
+        flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.server-addr}
+            namespace: c0fed0b5-46a6-44b9-b850-44c2ae0d7fe7
+            data-id: ${spring.application.name}-sentinel-rule-flow
+            #  group-id: DEFAULT_GROUP
+            data-type: json
+            #  流控规则  rule-type 配置表示该数据源中的规则属于哪种类型的规则(flow，degrade，authority，system, param-flow, gw-flow, gw-api-group)
+            rule-type: flow
+        # 降级策略
+        degrade:
+          nacos:
+            server-addr: ${spring.cloud.nacos.server-addr}
+            namespace: c0fed0b5-46a6-44b9-b850-44c2ae0d7fe7
+            data-id: ${spring.application.name}-sentinel-rule-degrade
+            #  group-id: DEFAULT_GROUP
+            data-type: json
+            #  流控规则  rule-type 配置表示该数据源中的规则属于哪种类型的规则(flow，degrade，authority，system, param-flow, gw-flow, gw-api-group)
+            rule-type: degrade
+
+feign:
+  sentinel:
+    enabled: true
+  httpclient:
+    connection-timeout: 3000
+logging:
+  level:
+    com: debug
+
+student:
+  name: 'app-base-center本地配置数据'
